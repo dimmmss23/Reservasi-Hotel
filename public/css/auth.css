@@ -1,0 +1,203 @@
+/* Auth Pages CSS - D'Mas Hotel */
+
+/* Sembunyikan navbar dan footer dari layout */
+nav {
+    display: none !important;
+}
+
+#app > footer {
+    display: none !important;
+}
+
+main {
+    padding: 0 !important;
+    position: relative;
+    min-height: 100vh;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+/* Header Logo */
+.login-header {
+    position: absolute;
+    top: 30px;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    padding: 0 50px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.login-header .logo {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.login-header .logo:hover {
+    color: #D4AF37;
+}
+
+.login-header .nav-links a {
+    color: white;
+    text-decoration: none;
+    margin-left: 30px;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: color 0.3s;
+}
+
+.login-header .nav-links a:hover {
+    color: #D4AF37;
+}
+
+.login-header .nav-links a.active {
+    color: #D4AF37;
+}
+
+/* Footer styling */
+footer {
+    background: transparent !important;
+    margin-top: 0 !important;
+    padding: 1rem 0 !important;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+footer p {
+    margin: 0;
+    font-size: 0.85rem;
+}
+
+.login-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    background: url('/images/bg-hotel.jpg') center/cover no-repeat;
+    z-index: -2;
+}
+
+.login-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: -1;
+}
+
+.glass-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    border-radius: 20px;
+}
+
+.glass-card .card-header {
+    background: transparent;
+    backdrop-filter: none;
+    border: none;
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    padding: 2rem 1rem 1rem;
+}
+
+.glass-card .card-body {
+    color: white;
+    padding: 2rem 3rem 3rem;
+}
+
+.glass-card label {
+    color: white;
+    font-weight: 400;
+    font-size: 0.95rem;
+    margin-bottom: 0.5rem;
+}
+
+.glass-card .form-control {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+    border-radius: 0;
+    color: white;
+    padding: 0.75rem 0.5rem;
+}
+
+.glass-card .form-control:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-bottom-color: white;
+    box-shadow: none;
+    color: white;
+}
+
+.glass-card .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.glass-card .form-check-label {
+    color: white;
+    font-size: 0.9rem;
+}
+
+.glass-card .form-check-input {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.glass-card .form-check-input:checked {
+    background-color: white;
+    border-color: white;
+}
+
+.glass-card a {
+    color: #D4AF37;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.glass-card a:hover {
+    color: #C9A227;
+    text-decoration: underline;
+}
+
+.glass-card .btn-primary {
+    background: linear-gradient(135deg, #D4AF37, #C9A227);
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+}
+
+.glass-card .btn-primary:hover {
+    background: linear-gradient(135deg, #C9A227, #D4AF37);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+}
+
+.register-link {
+    color: white;
+    font-size: 0.95rem;
+}
+
+.register-link a {
+    font-weight: 600;
+}

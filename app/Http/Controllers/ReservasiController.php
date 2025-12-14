@@ -1,0 +1,108 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Kamar;
+use App\Models\Reservasi;
+
+class ReservasiController extends Controller
+{
+    public function store(Request $r)
+    {
+        // Validasi input
+        $validated = $r->validate([
+            'kamar_id' => 'required|exists:kamars,id',
+            'check_in' => 'required|date|after_or_equal:today',
+            'check_out' => 'required|date|after:check_in',
+        ]);
+
+        // Cek apakah kamar tersedia di tanggal yang diminta
+        $kamar = Kamar::find($validated['kamar_id']);
+        
+        if (!$kamar->isAvailableOnDates($validated['check_in'], $validated['check_out'])) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Maaf, kamar ini sudah direservasi pada tanggal yang Anda pilih. Silakan pilih tanggal lain atau kamar lain.');
+        }
+
+        // Hitung total harga
+        $checkIn = \Carbon\Carbon::parse($validated['check_in']);
+        $checkOut = \Carbon\Carbon::parse($validated['check_out']);
+        $durasi = $checkIn->diffInDays($checkOut);
+        $total = $durasi * $kamar->harga;
+        
+        // Simpan reservasi
+        Reservasi::create([
+            'user_id' => auth()->id(),
+            'kamar_id' => $validated['kamar_id'],
+            'check_in' => $validated['check_in'],
+            'check_out' => $validated['check_out'],
+            'total_harga' => $total,
+        ]);
+        
+        return redirect('/reservasi/saya')->with('success', 'Reservasi berhasil dibuat. Menunggu konfirmasi admin.');
+    }
+
+    public function listUser()
+    {
+        $data = Reservasi::where('user_id', auth()->id())->get();
+        return view('tamu.reservasi.index', compact('data'));
+    }
+
+    public function cancel($id)
+    {
+        $reservasi = Reservasi::where('id', $id)
+            ->where('user_id', auth()->id())
+            ->first();
+
+        if (!$reservasi) {
+            return back()->with('error', 'Reservasi tidak ditemukan.');
+        }
+
+        // Hanya bisa cancel jika status masih pending atau menunggu
+        if (!in_array($reservasi->status, ['pending', 'menunggu'])) {
+            return back()->with('error', 'Tidak dapat membatalkan reservasi dengan status ' . $reservasi->status);
+        }
+
+        $reservasi->update(['status' => 'dibatalkan']);
+        
+        return back()->with('success', 'Reservasi berhasil dibatalkan.');
+    }
+
+    // ADMIN
+    public function indexAdmin()
+    {
+        $data = Reservasi::with('user', 'kamar')->get();
+        return view('admin.reservasi.index', compact('data'));
+    }
+
+    public function approve($id)
+    {
+        Reservasi::where('id', $id)->update(['status' => 'disetujui']);
+        return back()->with('success', 'Reservasi berhasil disetujui.');
+    }
+
+    public function reject($id)
+    {
+        Reservasi::where('id', $id)->update(['status' => 'ditolak']);
+        return back()->with('success', 'Reservasi berhasil ditolak.');
+    }
+
+    public function checkout($id)
+    {
+        $reservasi = Reservasi::find($id);
+        
+        if (!$reservasi) {
+            return back()->with('error', 'Reservasi tidak ditemukan.');
+        }
+
+        if ($reservasi->status !== 'disetujui') {
+            return back()->with('error', 'Hanya reservasi yang disetujui yang bisa di-checkout.');
+        }
+
+        $reservasi->update(['status' => 'selesai']);
+        
+        return back()->with('success', 'Checkout berhasil. Kamar ' . $reservasi->kamar->nama_kamar . ' sekarang tersedia kembali.');
+    }
+}

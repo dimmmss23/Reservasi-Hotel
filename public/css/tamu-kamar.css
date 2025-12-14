@@ -1,0 +1,41 @@
+/* Tamu Kamar Page CSS - D'Mas Hotel */
+
+.hover-shadow {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.15) !important;
+}
+
+.btn-gold {
+    background: linear-gradient(135deg, #D4AF37, #C9A227);
+    border: none;
+    color: white;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-gold:hover {
+    background: linear-gradient(135deg, #C9A227, #D4AF37);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+}
+
+.btn-outline-gold {
+    background: white;
+    border: 2px solid #D4AF37;
+    color: #D4AF37;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.btn-outline-gold:hover {
+    background: #D4AF37;
+    border-color: #D4AF37;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+}
