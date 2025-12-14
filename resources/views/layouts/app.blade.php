@@ -26,7 +26,7 @@
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-dark shadow-sm">
             <div class="container">
-                <a class="navbar-brand fw-bold" href="{{ url('/') }}">
+                <a class="navbar-brand fw-bold" href="@auth @if(auth()->user()->role == 'admin') {{ url('/admin/dashboard') }} @else {{ url('/tamu/home') }} @endif @else {{ url('/') }} @endauth">
                     D'Mas Hotel
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -38,6 +38,11 @@
                     <ul class="navbar-nav me-auto">
                         @auth
                             @if(auth()->user()->role == 'admin')
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}" href="/admin/dashboard">
+                                        <i class="bi bi-speedometer2"></i> Dashboard
+                                    </a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->is('admin/kamar*') ? 'active' : '' }}" href="/admin/kamar">
                                         <i class="bi bi-door-open"></i> Kelola Kamar
@@ -54,6 +59,11 @@
                                     </a>
                                 </li>
                             @else
+                                <li class="nav-item">
+                                    <a class="nav-link {{ request()->is('tamu/home') ? 'active' : '' }}" href="/tamu/home">
+                                        <i class="bi bi-house-door"></i> Home
+                                    </a>
+                                </li>
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->is('kamar*') ? 'active' : '' }}" href="/kamar">
                                         <i class="bi bi-search"></i> Cari Kamar

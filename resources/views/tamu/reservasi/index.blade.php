@@ -110,15 +110,40 @@
                                             </small>
                                         </div>
 
-                                        @if(in_array($reservasi->status, ['pending', 'menunggu']))
-                                            <form action="/reservasi/{{ $reservasi->id }}/cancel" method="POST" class="mt-2"
-                                                  onsubmit="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')">
-                                                @csrf
-                                                <button type="submit" class="btn btn-sm btn-outline-danger w-100">
-                                                    <i class="bi bi-x-circle"></i> Batalkan
-                                                </button>
-                                            </form>
+                                        <!-- Status Pembayaran -->
+                                        @if($reservasi->payment)
+                                            <div class="mt-2">
+                                                <small class="d-block"><strong>Status Pembayaran:</strong></small>
+                                                {!! $reservasi->payment->statusBadge !!}
+                                            </div>
                                         @endif
+
+                                        <!-- Tombol Aksi -->
+                                        <div class="mt-3">
+                                            @if($reservasi->payment)
+                                                <!-- Jika sudah ada payment, tampilkan tombol invoice -->
+                                                <a href="{{ route('tamu.payment.show', $reservasi->id) }}" 
+                                                   class="btn btn-sm btn-primary w-100 mb-2">
+                                                    <i class="bi bi-file-earmark-text"></i> Lihat Detail & Invoice
+                                                </a>
+                                            @elseif(!in_array($reservasi->status, ['dibatalkan', 'ditolak', 'selesai']))
+                                                <!-- Jika belum ada payment dan status masih aktif, tampilkan tombol bayar -->
+                                                <a href="{{ route('tamu.payment.upload', $reservasi->id) }}" 
+                                                   class="btn btn-sm btn-success w-100 mb-2">
+                                                    <i class="bi bi-credit-card"></i> Bayar Sekarang
+                                                </a>
+                                            @endif
+                                            
+                                            @if(in_array($reservasi->status, ['pending', 'menunggu']) && (!$reservasi->payment || $reservasi->payment->status == 'pending'))
+                                                <form action="/reservasi/{{ $reservasi->id }}/cancel" method="POST"
+                                                      onsubmit="return confirm('Apakah Anda yakin ingin membatalkan reservasi ini?')">
+                                                    @csrf
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                                        <i class="bi bi-x-circle"></i> Batalkan Reservasi
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>

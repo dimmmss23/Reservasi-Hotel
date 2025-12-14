@@ -37,7 +37,11 @@
                                 Kamar ini sudah direservasi dari 
                                 <strong>{{ \Carbon\Carbon::parse($activeReservation->check_in)->format('d M Y') }}</strong> 
                                 hingga 
-                                <strong>{{ \Carbon\Carbon::parse($activeReservation->check_out)->format('d M Y') }}</strong>.
+                                <strong>{{ \Carbon\Carbon::parse($activeReservation->check_out)->format('d M Y') }}</strong>
+                                @if(in_array($activeReservation->status, ['pending', 'menunggu']))
+                                    (sedang menunggu validasi pembayaran)
+                                @endif
+                                .
                                 <br>
                                 Anda bisa memesan kamar ini untuk tanggal di luar periode tersebut.
                             </small>
@@ -127,20 +131,21 @@
                             @enderror
                         </div>
                         
-                        <div class="alert alert-info">
-                            <i class="bi bi-info-circle"></i> 
-                            <strong>Catatan:</strong><br>
-                            - Reservasi akan menunggu konfirmasi dari admin<br>
-                            - Total harga akan dihitung otomatis berdasarkan jumlah malam<br>
-                            - Pastikan tanggal yang dipilih tidak bentrok dengan reservasi lain<br>
-                            - Tanggal check-in dan check-out harus benar
+                        <div class="alert alert-info mb-3">
+                            <h6 class="mb-2"><i class="bi bi-info-circle"></i> <strong>Informasi Penting:</strong></h6>
+                            <ul class="mb-0" style="font-size: 0.9rem;">
+                                <li>Setelah mengirim reservasi, Anda akan <strong>langsung diarahkan ke halaman pembayaran</strong></li>
+                                <li>Harap siapkan bukti transfer untuk melengkapi pembayaran</li>
+                                <li>Total harga akan dihitung otomatis berdasarkan jumlah malam</li>
+                                <li>Reservasi akan diproses setelah pembayaran divalidasi admin</li>
+                            </ul>
                         </div>
                         
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-warning btn-lg">
-                                <i class="bi bi-send"></i> Kirim Reservasi
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-arrow-right-circle"></i> Lanjut ke Pembayaran
                             </button>
-                            <a href="/kamar" class="btn btn-secondary">
+                            <a href="/kamar" class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-left"></i> Kembali ke Daftar Kamar
                             </a>
                         </div>

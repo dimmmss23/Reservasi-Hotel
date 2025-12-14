@@ -20,11 +20,11 @@ class Kamar extends Model
         return $this->hasMany(Reservasi::class);
     }
 
-    // Cek apakah kamar sudah direservasi (status pending atau disetujui)
+    // Cek apakah kamar sudah direservasi (status pending, menunggu, atau disetujui)
     public function isReserved()
     {
         return $this->reservasis()
-            ->whereIn('status', ['pending', 'disetujui'])
+            ->whereIn('status', ['pending', 'menunggu', 'disetujui', 'confirmed'])
             ->exists();
     }
 
@@ -32,7 +32,7 @@ class Kamar extends Model
     public function activeReservation()
     {
         return $this->reservasis()
-            ->whereIn('status', ['pending', 'disetujui'])
+            ->whereIn('status', ['pending', 'menunggu', 'disetujui', 'confirmed'])
             ->with('user')
             ->first();
     }
@@ -41,13 +41,12 @@ class Kamar extends Model
     public function isAvailableOnDates($checkIn, $checkOut)
     {
         // Cek apakah ada reservasi yang bentrok dengan tanggal yang diminta
-        // Reservasi bentrok jika:
-        // 1. Check-in baru di antara check-in dan check-out reservasi lama
-        // 2. Check-out baru di antara check-in dan check-out reservasi lama
-        // 3. Check-in baru sebelum check-in lama dan check-out baru setelah check-out lama
+        // Termasuk reservasi yang sedang menunggu validasi pembayaran
+        // Status yang dianggap "mengambil" kamar: pending, menunggu, disetujui, confirmed
+        // Status yang TIDAK mengambil kamar: ditolak, dibatalkan, selesai
         
         $conflict = $this->reservasis()
-            ->whereIn('status', ['pending', 'disetujui'])
+            ->whereIn('status', ['pending', 'menunggu', 'disetujui', 'confirmed'])
             ->where(function($query) use ($checkIn, $checkOut) {
                 // Cek overlap tanggal
                 $query->where(function($q) use ($checkIn, $checkOut) {

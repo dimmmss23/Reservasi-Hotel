@@ -33,7 +33,7 @@ class ReservasiController extends Controller
         $total = $durasi * $kamar->harga;
         
         // Simpan reservasi
-        Reservasi::create([
+        $reservasi = Reservasi::create([
             'user_id' => auth()->id(),
             'kamar_id' => $validated['kamar_id'],
             'check_in' => $validated['check_in'],
@@ -41,12 +41,16 @@ class ReservasiController extends Controller
             'total_harga' => $total,
         ]);
         
-        return redirect('/reservasi/saya')->with('success', 'Reservasi berhasil dibuat. Menunggu konfirmasi admin.');
+        // Redirect langsung ke halaman pembayaran
+        return redirect()->route('tamu.payment.upload', $reservasi->id)
+            ->with('success', 'Reservasi berhasil dibuat. Silakan selesaikan pembayaran.');
     }
 
     public function listUser()
     {
-        $data = Reservasi::where('user_id', auth()->id())->get();
+        $data = Reservasi::where('user_id', auth()->id())
+            ->orderBy('created_at', 'desc')
+            ->get();
         return view('tamu.reservasi.index', compact('data'));
     }
 
@@ -73,20 +77,64 @@ class ReservasiController extends Controller
     // ADMIN
     public function indexAdmin()
     {
-        $data = Reservasi::with('user', 'kamar')->get();
+        $data = Reservasi::with(['user', 'kamar', 'payment'])
+            ->orderBy('created_at', 'desc')
+            ->get();
         return view('admin.reservasi.index', compact('data'));
+    }
+
+    public function show($id)
+    {
+        $reservasi = Reservasi::with(['user', 'kamar', 'payment.validator'])->findOrFail($id);
+        return view('admin.reservasi.show', compact('reservasi'));
     }
 
     public function approve($id)
     {
-        Reservasi::where('id', $id)->update(['status' => 'disetujui']);
-        return back()->with('success', 'Reservasi berhasil disetujui.');
+        $reservasi = Reservasi::with('payment')->find($id);
+        
+        if (!$reservasi) {
+            return back()->with('error', 'Reservasi tidak ditemukan.');
+        }
+
+        // Update status reservasi
+        $reservasi->update(['status' => 'disetujui']);
+
+        // Jika ada pembayaran, update status pembayaran juga
+        if ($reservasi->payment) {
+            $reservasi->payment->update([
+                'status' => 'diterima',
+                'tanggal_validasi' => now(),
+                'validated_by' => auth()->id(),
+                'catatan_admin' => 'Pembayaran dan reservasi disetujui.'
+            ]);
+        }
+
+        return back()->with('success', 'Pembayaran dan reservasi berhasil disetujui.');
     }
 
     public function reject($id)
     {
-        Reservasi::where('id', $id)->update(['status' => 'ditolak']);
-        return back()->with('success', 'Reservasi berhasil ditolak.');
+        $reservasi = Reservasi::with('payment')->find($id);
+        
+        if (!$reservasi) {
+            return back()->with('error', 'Reservasi tidak ditemukan.');
+        }
+
+        // Update status reservasi
+        $reservasi->update(['status' => 'ditolak']);
+
+        // Jika ada pembayaran, update status pembayaran juga
+        if ($reservasi->payment) {
+            $reservasi->payment->update([
+                'status' => 'ditolak',
+                'tanggal_validasi' => now(),
+                'validated_by' => auth()->id(),
+                'catatan_admin' => 'Pembayaran tidak valid atau reservasi ditolak. Silakan upload ulang bukti pembayaran yang benar.'
+            ]);
+        }
+
+        return back()->with('success', 'Pembayaran dan reservasi berhasil ditolak.');
     }
 
     public function checkout($id)
