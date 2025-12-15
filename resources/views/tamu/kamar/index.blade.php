@@ -36,18 +36,40 @@
                         <!-- Status Ketersediaan -->
                         @if($kamar->isReserved())
                             @php
-                                $activeReservation = $kamar->activeReservation();
-                                $availableDate = $activeReservation ? \Carbon\Carbon::parse($activeReservation->check_out)->format('d M Y') : '-';
+                                $activeReservations = $kamar->activeReservations();
+                                $reservationCount = $activeReservations->count();
                             @endphp
-                            <div class="alert alert-danger py-1 px-2 mb-2" style="font-size: 0.85rem;">
-                                <div><i class="bi bi-x-circle"></i> Sudah Direservasi</div>
-                                <small class="text-muted" style="font-size: 0.75rem;">
-                                    <i class="bi bi-calendar-event"></i> Tersedia: {{ $availableDate }}
-                                </small>
+                            <div class="alert alert-warning py-2 px-2 mb-2" style="font-size: 0.85rem;">
+                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                    <span><i class="bi bi-exclamation-triangle"></i> <strong>Sudah Direservasi</strong></span>
+                                    <span class="badge bg-danger">{{ $reservationCount }} periode</span>
+                                </div>
+                                <button class="btn btn-sm btn-outline-secondary w-100 mt-1" 
+                                        type="button" 
+                                        data-bs-toggle="collapse" 
+                                        data-bs-target="#reservasi-{{ $kamar->id }}" 
+                                        aria-expanded="false">
+                                    <i class="bi bi-calendar-event"></i> Lihat Periode Reservasi
+                                </button>
+                                <div class="collapse mt-2" id="reservasi-{{ $kamar->id }}">
+                                    <div class="card card-body p-2" style="font-size: 0.75rem; background-color: #fff3cd;">
+                                        <strong class="mb-1">Tidak tersedia pada:</strong>
+                                        @foreach($activeReservations as $reservation)
+                                            @php
+                                                $checkInDate = \Carbon\Carbon::parse($reservation->check_in)->format('d M Y');
+                                                $checkOutDate = \Carbon\Carbon::parse($reservation->check_out)->format('d M Y');
+                                            @endphp
+                                            <div class="d-flex align-items-center gap-1 mb-1">
+                                                <i class="bi bi-calendar-x text-danger"></i>
+                                                <span>{{ $checkInDate }} - {{ $checkOutDate }}</span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
                         @else
                             <div class="alert alert-success py-1 px-2 mb-2" style="font-size: 0.85rem;">
-                                <i class="bi bi-check-circle"></i> Tersedia
+                                <i class="bi bi-check-circle"></i> <strong>Tersedia Sekarang</strong>
                             </div>
                         @endif
                         

@@ -142,6 +142,10 @@
                                                         <i class="bi bi-x-circle"></i> Batalkan Reservasi
                                                     </button>
                                                 </form>
+                                            @elseif($reservasi->status == 'disetujui' && $reservasi->payment && $reservasi->payment->status == 'diterima')
+                                                <div class="alert alert-info small p-2 mt-2">
+                                                    <i class="bi bi-info-circle"></i> Untuk membatalkan reservasi yang sudah disetujui, silakan hubungi admin.
+                                                </div>
                                             @endif
                                         </div>
                                     </div>

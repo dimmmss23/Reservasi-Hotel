@@ -28,11 +28,34 @@ class Kamar extends Model
             ->exists();
     }
 
-    // Ambil reservasi aktif
+    // Ambil semua reservasi aktif
+    public function activeReservations()
+    {
+        return $this->reservasis()
+            ->whereIn('status', ['pending', 'menunggu', 'disetujui', 'confirmed'])
+            ->with('user')
+            ->orderBy('check_in', 'asc')
+            ->get();
+    }
+
+    // Ambil reservasi aktif terdekat (untuk backward compatibility)
     public function activeReservation()
     {
         return $this->reservasis()
             ->whereIn('status', ['pending', 'menunggu', 'disetujui', 'confirmed'])
+            ->with('user')
+            ->orderBy('check_in', 'asc')
+            ->first();
+    }
+
+    // Ambil reservasi yang sedang berlangsung saat ini
+    public function currentReservation()
+    {
+        $today = now()->format('Y-m-d');
+        return $this->reservasis()
+            ->whereIn('status', ['disetujui', 'confirmed'])
+            ->where('check_in', '<=', $today)
+            ->where('check_out', '>', $today)
             ->with('user')
             ->first();
     }

@@ -31,14 +31,45 @@
                     
                     <!-- Status Ketersediaan -->
                     @if($isReserved)
-                        <div class="alert alert-danger mb-3">
-                            <i class="bi bi-x-circle"></i> <strong>Kamar Tidak Tersedia</strong><br>
-                            <small>Kamar ini sedang direservasi.</small>
+                        @php
+                            $activeReservations = $kamar->activeReservations();
+                            $reservationCount = $activeReservations->count();
+                        @endphp
+                        <div class="alert alert-warning mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h6 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Kamar Sudah Direservasi</h6>
+                                <span class="badge bg-danger">{{ $reservationCount }} periode</span>
+                            </div>
+                        </div>
+                        
+                        <div class="card border-warning mb-3">
+                            <div class="card-header bg-warning bg-opacity-10">
+                                <strong><i class="bi bi-calendar-x"></i> Periode yang Tidak Tersedia</strong>
+                            </div>
+                            <div class="card-body">
+                                @foreach($activeReservations as $index => $reservation)
+                                    @php
+                                        $checkInDate = \Carbon\Carbon::parse($reservation->check_in)->format('d M Y');
+                                        $checkOutDate = \Carbon\Carbon::parse($reservation->check_out)->format('d M Y');
+                                    @endphp
+                                    <div class="d-flex align-items-center justify-content-between p-2 mb-2 border-start border-danger border-3 bg-light">
+                                        <div>
+                                            <i class="bi bi-calendar-event text-danger"></i>
+                                            <strong>{{ $checkInDate }}</strong> s/d <strong>{{ $checkOutDate }}</strong>
+                                        </div>
+                                        <span class="badge bg-secondary">Periode {{ $index + 1 }}</span>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <small><i class="bi bi-info-circle"></i> Anda dapat melakukan reservasi untuk tanggal di luar periode yang sudah direservasi.</small>
                         </div>
                     @else
                         <div class="alert alert-success mb-3">
-                            <i class="bi bi-check-circle"></i> <strong>Kamar Tersedia</strong><br>
-                            <small>Kamar ini dapat direservasi.</small>
+                            <i class="bi bi-check-circle"></i> <strong>Kamar Tersedia Sekarang</strong><br>
+                            <small>Kamar ini dapat direservasi untuk tanggal yang Anda inginkan.</small>
                         </div>
                     @endif
                     

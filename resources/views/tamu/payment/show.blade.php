@@ -223,9 +223,22 @@
                             <div class="alert alert-success">
                                 <i class="bi bi-check-circle"></i> <strong>Pembayaran Anda telah diverifikasi dan diterima.</strong> Terima kasih telah melakukan pembayaran.
                             </div>
+                            @if($reservasi->status == 'disetujui')
+                                <div class="alert alert-info">
+                                    <h6 class="alert-heading"><i class="bi bi-info-circle"></i> Informasi Pembatalan</h6>
+                                    <p class="mb-0">Jika Anda ingin membatalkan reservasi ini, silakan hubungi admin terlebih dahulu untuk memproses pembatalan.</p>
+                                </div>
+                            @endif
                         @elseif($reservasi->payment->status == 'menunggu_validasi')
                             <div class="alert alert-info">
                                 <i class="bi bi-hourglass-split"></i> <strong>Pembayaran Anda sedang dalam proses validasi.</strong> Mohon tunggu konfirmasi dari admin.
+                            </div>
+                        @elseif($reservasi->payment->status == 'dibatalkan')
+                            <div class="alert alert-info">
+                                <h6 class="alert-heading"><i class="bi bi-arrow-counterclockwise"></i> Refund - Pengembalian Dana</h6>
+                                <p class="mb-2">{{ $reservasi->payment->catatan_admin ?? 'Reservasi ini telah dibatalkan dan pembayaran akan dikembalikan.' }}</p>
+                                <hr>
+                                <p class="mb-0"><small><strong>Catatan:</strong> Dana pembayaran Anda sebesar <strong>Rp {{ number_format($reservasi->payment->jumlah_bayar, 0, ',', '.') }}</strong> akan diproses untuk dikembalikan. Silakan hubungi admin untuk informasi lebih lanjut mengenai proses pengembalian dana.</small></p>
                             </div>
                         @endif
 

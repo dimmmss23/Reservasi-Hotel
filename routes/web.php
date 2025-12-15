@@ -29,6 +29,7 @@ Route::middleware(['auth', \App\Http\Middleware\IsAdmin::class])->group(function
     Route::post('/admin/reservasi/{id}/approve', [ReservasiController::class, 'approve']);
     Route::post('/admin/reservasi/{id}/reject', [ReservasiController::class, 'reject']);
     Route::post('/admin/reservasi/{id}/checkout', [ReservasiController::class, 'checkout']);
+    Route::post('/admin/reservasi/{id}/cancel', [ReservasiController::class, 'cancelByAdmin']);
     
     // Kelola User
     Route::get('/admin/user', [UserController::class, 'index']);

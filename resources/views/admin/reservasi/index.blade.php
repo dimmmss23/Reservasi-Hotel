@@ -88,13 +88,22 @@
                                                 <a href="{{ route('admin.reservasi.show', $reservasi->id) }}" class="btn btn-sm btn-info w-100 mb-1">
                                                     <i class="bi bi-eye"></i> Lihat Detail
                                                 </a>
-                                                <form action="/admin/reservasi/{{ $reservasi->id }}/checkout" method="POST">
+                                                <form action="/admin/reservasi/{{ $reservasi->id }}/checkout" method="POST" class="mb-1">
                                                     @csrf
                                                     <button type="submit" class="btn btn-sm btn-warning w-100" 
                                                             onclick="return confirm('Checkout reservasi ini? Kamar akan tersedia kembali.')">
                                                         <i class="bi bi-box-arrow-right"></i> Checkout
                                                     </button>
                                                 </form>
+                                                @if($reservasi->payment && $reservasi->payment->status == 'diterima')
+                                                    <form action="/admin/reservasi/{{ $reservasi->id }}/cancel" method="POST">
+                                                        @csrf
+                                                        <button type="submit" class="btn btn-sm btn-danger w-100" 
+                                                                onclick="return confirm('Batalkan reservasi ini? Uang akan dikurangkan dari total pendapatan.')">
+                                                            <i class="bi bi-x-circle"></i> Batalkan
+                                                        </button>
+                                                    </form>
+                                                @endif
                                             @else
                                                 <a href="{{ route('admin.reservasi.show', $reservasi->id) }}" class="btn btn-sm btn-outline-secondary w-100">
                                                     <i class="bi bi-eye"></i> Lihat Detail

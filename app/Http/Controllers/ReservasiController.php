@@ -153,4 +153,35 @@ class ReservasiController extends Controller
         
         return back()->with('success', 'Checkout berhasil. Kamar ' . $reservasi->kamar->nama_kamar . ' sekarang tersedia kembali.');
     }
+
+    public function cancelByAdmin($id)
+    {
+        $reservasi = Reservasi::with('payment')->find($id);
+        
+        if (!$reservasi) {
+            return back()->with('error', 'Reservasi tidak ditemukan.');
+        }
+
+        // Hanya bisa cancel jika status disetujui dan sudah dibayar
+        if ($reservasi->status !== 'disetujui') {
+            return back()->with('error', 'Hanya reservasi yang disetujui yang bisa dibatalkan oleh admin.');
+        }
+
+        if (!$reservasi->payment || $reservasi->payment->status !== 'diterima') {
+            return back()->with('error', 'Reservasi belum memiliki pembayaran yang diterima.');
+        }
+
+        // Update status reservasi
+        $reservasi->update(['status' => 'dibatalkan']);
+
+        // Update status pembayaran menjadi dibatalkan
+        $reservasi->payment->update([
+            'status' => 'dibatalkan',
+            'tanggal_validasi' => now(),
+            'validated_by' => auth()->id(),
+            'catatan_admin' => 'Reservasi dibatalkan oleh admin atas permintaan tamu. Pembayaran akan dikurangkan dari total pendapatan.'
+        ]);
+
+        return back()->with('success', 'Reservasi berhasil dibatalkan. Pembayaran akan dikurangkan dari total pendapatan.');
+    }
 }

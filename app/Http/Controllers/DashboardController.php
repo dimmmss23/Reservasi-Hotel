@@ -28,7 +28,8 @@ class DashboardController extends Controller
         // Total Tamu
         $totalTamu = User::where('role', 'tamu')->count();
         
-        // Total Pendapatan (dari pembayaran yang diterima)
+        // Total Pendapatan (hanya dari pembayaran yang diterima)
+        // Pembayaran yang dibatalkan statusnya sudah berubah jadi 'dibatalkan', jadi tidak dihitung
         $totalPendapatan = Payment::where('status', 'diterima')
             ->sum('jumlah_bayar');
         

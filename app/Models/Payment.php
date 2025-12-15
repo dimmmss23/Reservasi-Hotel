@@ -46,6 +46,7 @@ class Payment extends Model
             'menunggu_validasi' => '<span class="badge bg-warning text-dark">Menunggu Validasi</span>',
             'diterima' => '<span class="badge bg-success">Diterima</span>',
             'ditolak' => '<span class="badge bg-danger">Ditolak</span>',
+            'dibatalkan' => '<span class="badge bg-info"><i class="bi bi-arrow-counterclockwise"></i> Refund</span>',
             default => '<span class="badge bg-secondary">Unknown</span>',
         };
     }
